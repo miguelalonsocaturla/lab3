@@ -1,61 +1,37 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "react-bootstrap"
-import {useNavigate } from "react-router-dom"
-import BlogList from "./bloglist"
+import {useNavigate, Link } from "react-router-dom"
+import useFetch from "./usefetch";
 import "./App.css";
 
-function Login() {
-  // React States
+export default function Login() {
+
   const [errorMessages, setErrorMessages] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [users, setusers] = useState(null)
-  const [blogs, setblogs] = useState(null)
   const navigate = useNavigate()
-
-  useEffect(() => {
-    fetch('http://localhost:8000/users')
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        setusers(data);
-      })
-  }, [])
-
-  useEffect(() => {
-    fetch('http://localhost:8000/blogs')
-      .then(res => {
-        return res.json();
-      })
-      .then(data => {
-        setblogs(data);
-      })
-  }, [])
-
+  const { data: users } = useFetch('http://localhost:8000/users')
+  const[user, setuser]  = useState("")
   const errors = {
     uname: "invalid username",
     pass: "invalid password"
   };
 
   const handleSubmit = (event) => {
-    //Prevent page reload
+    
     event.preventDefault();
-
     var { uname, pass } = document.forms[0];
+    const userData = users.find((user) => user.user === uname.value)
 
-    // Find user login info
-    const userData = users.find((user) => user.user === uname.value);
-
-    // Compare user info
     if (userData) {
       if (userData.password !== pass.value) {
-        // Invalid password
+
         setErrorMessages({ name: "pass", message: errors.pass });
       } else {
         setIsSubmitted(true);
+        setuser(userData.user);
       }
     } else {
-      // Username not found
+
       setErrorMessages({ name: "uname", message: errors.uname });
     }
   };
@@ -72,7 +48,7 @@ function Login() {
       <form onSubmit={handleSubmit}>
         <div className="input-container">
           <label>Username </label>
-          <input type="text" name="uname" required />
+          <input type="username" name="uname" required />
           {renderErrorMessage("uname")}
         </div>
         <div className="input-container">
@@ -91,10 +67,10 @@ function Login() {
     <div className="login">
       <div className="login-form">
         <div className="title">Log in</div>
-        {isSubmitted ? <BlogList blogs={blogs} uname={username} />:renderForm }
+        {isSubmitted ? <div><div>User is successfully logged in.</div><Link to={`/bloglist/${user}`}><Button>Continue</Button></Link></div>:renderForm }
+        
       </div>
     </div>
   );
 }
 
-export default Login;
