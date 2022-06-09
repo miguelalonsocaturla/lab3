@@ -2,10 +2,10 @@ import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom'
 import { useState } from 'react'
 
 // pages
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import ProductDetails from './pages/ProductDetails'
+import Home from './Home'
+import Login from './Login'
+import Register from './Register'
+import ProductDetails from './ProductDetails'
 
 function App() {
 
